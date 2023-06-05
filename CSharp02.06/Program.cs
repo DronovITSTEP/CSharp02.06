@@ -35,6 +35,7 @@ namespace CSharp02._06
             }
             set
             {
+                if (value == null) throw new ExceptionCard();
                 if (value.IndexOfAny("0123456789".ToCharArray()) != -1)
                     throw new ExceptionCard("в имени содержатся недопустимые символы");
                 _firstName = value;
@@ -61,6 +62,7 @@ namespace CSharp02._06
             }
             set
             {
+                if (value == null) throw new ExceptionCard("Нет данных");
                 if (value.Length != 3) throw new ExceptionCard("длина CVC больше или меньше допустимого значения");
                 if (int.TryParse(value, out int i) == false) throw new ExceptionCard("в CVC имеются недопустимые символы");
                 _cvc = value;
@@ -87,36 +89,44 @@ namespace CSharp02._06
             set
             {
                 if (value.Length != 16) throw new ExceptionCard("Неверно указан номер карты");
-                //if (int.TryParse(value, out int i) == false) throw new ExceptionCard("в номере имеются недопустимые символы");
+                if (long.TryParse(value, out long i) == false) 
+                    throw new ExceptionCard("в номере имеются недопустимые символы");
                 _numberCard = SplitNumberCard(value);
             }
         }
 
-        /*public CreditCard() :
+        public CreditCard() :
             this("0000000000000000",
             "нет_имени", "нет_фамилии",
             "111", DateTime.Now)
-        { }*/
-        /*public CreditCard(
+        { }
+        public CreditCard(
             string numberCard,
             string firstName,
             string lastName,
             string cvc,
             DateTime dateTime)
         {
-            NumberCard = numberCard;
-            FirstName = firstName;
-            LastName = lastName;
-            Cvc = cvc;
-            DateEnd = dateTime;
-        }*/
+            try
+            {
+                NumberCard = numberCard;
+                FirstName = firstName;
+                LastName = lastName;
+                Cvc = cvc;
+                DateEnd = dateTime;
+            }
+            catch (NullReferenceException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
 
         public string Display()
         {
             return String.Format("Номер карты: {0}\n" +
-                "Имя владельца: {1, 20:S}\n" +
-                "CVC : {2, 20:D}\n" +
-                "Срок действия карты: {3, 20:D}\n",
+                "Имя владельца: {1}\n" +
+                "CVC : {2}\n" +
+                "Срок действия карты: {3}\n",
                 NumberCard, FirstName + " " + LastName,
                 Cvc, DateEnd.Month + "/" + DateEnd.Year);
         }
@@ -264,7 +274,7 @@ namespace CSharp02._06
             {
                 CreditCard creditCard1 = new CreditCard
                 {
-                    NumberCard = "0076453812356221",
+                    NumberCard = "7645381235622551",
                     FirstName = "Иван",
                     LastName = "Иванов",
                     Cvc = "004",
@@ -380,9 +390,9 @@ namespace CSharp02._06
             }
             Console.WriteLine();
 
-            /*try
+            try
             {
-                CreditCard creditCard8 = new CreditCard("00764538123562217", "", "", "", new DateTime(1, 1, 1));
+                CreditCard creditCard8 = new CreditCard("0076453812356217", "Petr", "Petrov", null, new DateTime(1, 1, 1));
                 creditCard8.Display();
             }
             catch (Exception ex)
@@ -392,13 +402,13 @@ namespace CSharp02._06
             Console.WriteLine();
             try
             {
-                CreditCard creditCard9 = new CreditCard("00764538123562217", null, null, "000", new DateTime(1, 1, 1));
+                CreditCard creditCard9 = new CreditCard("0076453812356217", null, "Sidorov", "000", new DateTime(1, 1, 1));
                 creditCard9.Display();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }*/
+            }
 
             Console.ReadKey();
 
